@@ -1,0 +1,51 @@
+import java.time.*;
+import java.net.*;
+import java.io.*;
+
+/**
+ * MichaelBennett
+ * Class SDEV325
+ * Homework1
+ * 5/22/2023
+ */
+public class HelloJava {
+    
+    private static String getTemperature() {
+        String weatherAPIKey = "2dd8b861fc5ad57ae502422895053df7";
+        String cityName = "New%20York,US";
+		String urlString = "http://api.openweathermap.org/data/2.5/weather?q=" + cityName + "&appid=" + weatherAPIKey + "&units=imperial";
+		String temperature = "N/A";
+        
+        try {
+            URL url = new URL(urlString);
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            con.setRequestMethod("GET");
+            
+            BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+            String inputLine;
+            StringBuffer content = new StringBuffer();
+            while ((inputLine = in.readLine()) != null) {
+                content.append(inputLine);
+            }
+
+            // Finding temperature using string manipulation
+            int startPos = content.indexOf("\"temp\":") + 7;
+            int endPos = content.indexOf(",", startPos);
+            temperature = content.substring(startPos, endPos);
+            
+            in.close();
+            con.disconnect();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        
+        return temperature;
+    }
+    
+    public static void main(String[] args) {
+        ZonedDateTime nycTime = ZonedDateTime.now(ZoneId.of("America/New_York"));
+        System.out.println("Hello from AWS Cloud9!");
+        System.out.println("The current time in NYC is: " + nycTime);
+        System.out.println("The current temperature in NYC is: " + getTemperature() + "°F");
+    }
+}
